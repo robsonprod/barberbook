@@ -1,0 +1,15 @@
+# Perfil de desenvolvimento local: dados de demonstração + Swagger UI
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+logging:
+  structured:
+    format:
+      console: "" # local: log legível no terminal

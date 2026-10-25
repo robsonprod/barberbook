@@ -1,0 +1,13 @@
+# Perfil dos testes: sem dados de demonstração, log legível, sweeper "desligado"
+# (os testes chamam o sweeper explicitamente para não depender de timing).
+spring:
+  flyway:
+    locations: classpath:db/migration
+
+logging:
+  structured:
+    format:
+      console: ""
+
+barberbook:
+  sweeper-interval: 1h

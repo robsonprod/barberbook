@@ -1,0 +1,48 @@
+schema: spec-driven
+
+# Constraints an agent cannot infer by reading the code.
+context: |
+  Language: English
+  All artifacts must be written in English.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Project: BarberBook — a portfolio showcase built by a senior Java engineer to prove backend depth
+  (DDD, TDD, concurrency, payments, service integration, AWS). The repository is public and read by
+  recruiters: artifacts must explain decisions and trade-offs, not only what was built.
+
+  Product: a barbershop books haircuts online, takes a deposit through Mercado Pago, and manages
+  everything in an admin panel. One shop, several barbers, services with different durations.
+
+  Roadmap (one OpenSpec change each, in order):
+    1. add-slot-booking        booking core: availability, hold, confirm, cancel, expire, no double-booking
+    2. add-deposit-payment     Mercado Pago deposit, signed idempotent webhook, booking saga
+    3. add-admin-auth          staff login (JWT + refresh token, roles) for the admin API
+    4. add-admin-panel         Angular admin: bookings, search, monthly chart, Excel export
+    5. extract-payment-service payments as a separate service talking gRPC
+    6. add-aws-deployment      Terraform: ECS Fargate, RDS PostgreSQL, OIDC CI/CD
+
+  Hard constraints:
+  - Java 25 + Spring Boot 4 + Gradle (Kotlin DSL). The back-end is written in Java, not Kotlin.
+  - PostgreSQL is the source of truth for scheduling invariants: double-booking must be impossible at
+    the database level, not only checked in application code.
+  - Domain logic is test-driven: every domain rule has a unit test written before the implementation.
+    Integration tests use Testcontainers with real PostgreSQL — never H2.
+  - Start as a modular monolith with explicit module boundaries; extract services only in a dedicated
+    change that states the problem the extraction solves.
+  - All timestamps are stored in UTC; the shop's business time zone is America/Fortaleza.
+  - Everything runs locally with `docker compose up`; AWS is optional and must be destroyable with Terraform.
+  - Payments use only provider test credentials. No real card data is ever stored or logged.
+  - No secrets in the repository. No personal data in logs beyond an opaque customer id.
+
+rules:
+  proposal:
+    - Always state what is out of scope and which roadmap change covers it
+    - State the security and cost impact, even if it is "none"
+  design:
+    - Record each decision with the alternatives considered and why they were rejected
+    - Include a sequence or state diagram (mermaid) for any flow with more than two states
+  specs:
+    - Every concurrency or failure rule has a scenario that can be reproduced in an automated test
+  tasks:
+    - Domain tasks list the test to write first, then the implementation
+    - Every task group ends with a verification task (tests, build, or a manual check)

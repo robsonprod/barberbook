@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: barberbook
+  threads:
+    virtual:
+      enabled: true # requisições são I/O-bound; threads virtuais são baratas
+  datasource:
+    url: jdbc:postgresql://localhost:5440/barberbook # mesma porta do docker-compose
+    username: barberbook
+    password: barberbook
+  flyway:
+    locations: classpath:db/migration
+
+server:
+  shutdown: graceful
+
+logging:
+  structured:
+    format:
+      console: ecs # logs em JSON (Elastic Common Schema)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+barberbook:
+  zone-id: America/Fortaleza
+  slot-minutes: 15
+  booking-window-days: 30
+  hold-duration: 10m
+  sweeper-interval: 30s
+  idempotency-retention: 48h

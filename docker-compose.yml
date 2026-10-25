@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: barberbook
+      POSTGRES_USER: barberbook
+      POSTGRES_PASSWORD: barberbook
+    ports:
+      - "${BARBERBOOK_DB_PORT:-5440}:5432" # porta própria para não colidir com outros Postgres locais
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U barberbook -d barberbook"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/barberbook
+    ports:
+      - "${BARBERBOOK_APP_PORT:-8080}:8080"
+
+volumes:
+  pgdata:
